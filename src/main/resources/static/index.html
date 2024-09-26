@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Propiedades</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="pizza.jpg" alt="Imagen de Propiedad" class="header-image">
+            <h1>Gestión de Propiedades Inmobiliarias</h1>
+        </header>
+
+        <section class="form-section">
+            <form id="propertyForm">
+                <div class="form-group">
+                    <label for="address">Dirección:</label>
+                    <input type="text" id="address" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="price">Precio:</label>
+                    <input type="number" id="price" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="size">Tamaño (m²):</label>
+                    <input type="number" id="size" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Descripción:</label>
+                    <input type="text" id="description">
+                </div>
+
+                <button type="button" onclick="createProperty()">Agregar Propiedad</button>
+            </form>
+        </section>
+
+        <section class="property-list-section">
+            <h2>Lista de Propiedades</h2>
+            <ul id="propertyList"></ul>
+        </section>
+    </div>
+
+    <script>
+        const apiBaseUrl = 'http://localhost:8080/properties'; // Reemplaza <EC2-IP> con la IP de tu instancia EC2
+
+        async function createProperty() {
+            const property = {
+                address: document.getElementById('address').value,
+                price: document.getElementById('price').value,
+                size: document.getElementById('size').value,
+                description: document.getElementById('description').value
+            };
+
+            const response = await fetch(apiBaseUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(property),
+            });
+
+            if (response.ok) {
+                alert('Propiedad creada exitosamente');
+                listProperties();
+            } else {
+                alert('Error al crear la propiedad');
+            }
+        }
+
+        async function listProperties() {
+            const response = await fetch(apiBaseUrl);
+            const properties = await response.json();
+            const propertyList = document.getElementById('propertyList');
+            propertyList.innerHTML = '';
+            properties.forEach(property => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${property.address} - $${property.price} - ${property.size}m² - ${property.description}`;
+                propertyList.appendChild(listItem);
+            });
+        }
+
+        window.onload = listProperties;
+    </script>
+</body>
+</html>
