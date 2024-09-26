@@ -35,18 +35,35 @@
                     <input type="text" id="description">
                 </div>
 
-                <button type="button" onclick="createProperty()">Agregar Propiedad</button>
+                <!-- Botones para agregar o actualizar una propiedad -->
+                <button type="button" onclick="createProperty()" id="addButton">Agregar Propiedad</button>
+                <button type="button" onclick="updateProperty()" id="updateButton" style="display: none;">Actualizar Propiedad</button>
             </form>
         </section>
 
         <section class="property-list-section">
             <h2>Lista de Propiedades</h2>
-            <ul id="propertyList"></ul>
+            <table id="propertyTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Dirección</th>
+                        <th>Precio</th>
+                        <th>Tamaño (m²)</th>
+                        <th>Descripción</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Las propiedades serán cargadas aquí dinámicamente -->
+                </tbody>
+            </table>
         </section>
     </div>
 
     <script>
         const apiBaseUrl = 'http://localhost:8080/properties'; // Reemplaza <EC2-IP> con la IP de tu instancia EC2
+        let selectedPropertyId = null;
 
         async function createProperty() {
             const property = {
@@ -66,6 +83,7 @@
 
             if (response.ok) {
                 alert('Propiedad creada exitosamente');
+                clearForm();
                 listProperties();
             } else {
                 alert('Error al crear la propiedad');
@@ -75,13 +93,94 @@
         async function listProperties() {
             const response = await fetch(apiBaseUrl);
             const properties = await response.json();
-            const propertyList = document.getElementById('propertyList');
-            propertyList.innerHTML = '';
+            const propertyTableBody = document.querySelector('#propertyTable tbody');
+            propertyTableBody.innerHTML = '';
             properties.forEach(property => {
-                const listItem = document.createElement('li');
-                listItem.textContent = `${property.address} - $${property.price} - ${property.size}m² - ${property.description}`;
-                propertyList.appendChild(listItem);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${property.id}</td>
+                    <td>${property.address}</td>
+                    <td>$${property.price}</td>
+                    <td>${property.size} m²</td>
+                    <td>${property.description}</td>
+                    <td>
+                        <button onclick="editProperty(${property.id})">Editar</button>
+                        <button onclick="deleteProperty(${property.id})">Eliminar</button>
+                    </td>
+                `;
+                propertyTableBody.appendChild(row);
             });
+        }
+
+        async function deleteProperty(id) {
+            if (confirm('¿Estás seguro de que deseas eliminar esta propiedad?')) {
+                const response = await fetch(`${apiBaseUrl}/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    alert('Propiedad eliminada exitosamente');
+                    listProperties();
+                } else {
+                    alert('Error al eliminar la propiedad');
+                }
+            }
+        }
+
+        async function editProperty(id) {
+            const response = await fetch(`${apiBaseUrl}/${id}`);
+            const property = await response.json();
+            document.getElementById('address').value = property.address;
+            document.getElementById('price').value = property.price;
+            document.getElementById('size').value = property.size;
+            document.getElementById('description').value = property.description;
+
+            selectedPropertyId = id;
+
+            // Mostrar botón de actualizar y ocultar el de agregar
+            document.getElementById('addButton').style.display = 'none';
+            document.getElementById('updateButton').style.display = 'block';
+        }
+
+        async function updateProperty() {
+            if (selectedPropertyId === null) return;
+
+            const property = {
+                address: document.getElementById('address').value,
+                price: document.getElementById('price').value,
+                size: document.getElementById('size').value,
+                description: document.getElementById('description').value
+            };
+
+            const response = await fetch(`${apiBaseUrl}/${selectedPropertyId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(property),
+            });
+
+            if (response.ok) {
+                alert('Propiedad actualizada exitosamente');
+                clearForm();
+                listProperties();
+                selectedPropertyId = null;
+
+                // Mostrar el botón de agregar y ocultar el de actualizar
+                document.getElementById('addButton').style.display = 'block';
+                document.getElementById('updateButton').style.display = 'none';
+            } else {
+                alert('Error al actualizar la propiedad');
+            }
+        }
+
+        function clearForm() {
+            document.getElementById('propertyForm').reset();
+            selectedPropertyId = null;
+
+            // Mostrar el botón de agregar y ocultar el de actualizar cuando se limpie el formulario
+            document.getElementById('addButton').style.display = 'block';
+            document.getElementById('updateButton').style.display = 'none';
         }
 
         window.onload = listProperties;

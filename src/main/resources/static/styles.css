@@ -75,13 +75,12 @@ input[type="text"]:focus, input[type="number"]:focus {
 }
 
 button {
-    width: 100%;
-    padding: 10px;
+    padding: 8px 15px;
     background-color: #7a42a7; /* Botón púrpura más oscuro */
     color: white;
     border: none;
     border-radius: 5px;
-    font-size: 1em;
+    font-size: 0.9em;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
@@ -90,23 +89,28 @@ button:hover {
     background-color: #663d8b; /* Púrpura más intenso al pasar el ratón */
 }
 
-ul {
-    list-style-type: none;
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
 }
 
-li {
-    background-color: #d7b8f4; /* Fondo lila para las propiedades */
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    font-size: 1.1em;
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 2px solid #d7b8f4; /* Borde lila suave */
+}
+
+th {
+    background-color: #7b4ac9; /* Lila intermedio para la cabecera */
+    color: white;
+}
+
+td {
+    background-color: #f5e6ff; /* Lila claro para las celdas */
     color: #4c3b76; /* Texto morado oscuro */
-    display: flex;
-    justify-content: space-between;
 }
 
-li:hover {
-    background-color: #c6a3eb; /* Color más claro al pasar el ratón por encima de los items */
+td button {
+    margin-right: 5px;
 }
-
