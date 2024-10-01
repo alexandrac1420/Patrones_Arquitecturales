@@ -59,8 +59,23 @@ You need to install the following tools and configure their dependencies:
     ```sh
     git version 2.31.1
     ```
+---
+## How to Use the Property Management System
 
-### Installing Locally with Docker Compose
+The Property Management System allows users to manage real estate properties by providing functionalities such as creating new properties, updating existing properties, deleting properties, and searching for properties by address. Additionally, the system supports pagination for easier navigation through the property listings.
+
+### Features:
+1. **Add New Properties**: Create new property entries by providing address, price, size, and description.
+2. **Update Existing Properties**: Modify the details of a property, such as its price or description.
+3. **Delete Properties**: Remove properties that are no longer needed.
+4. **Search by Address**: Easily search for properties based on their address.
+5. **Pagination**: Navigate through property listings with paginated results.
+6. **User Feedback**: The system displays success, error, and validation messages to provide feedback during property management operations.
+
+---
+## Running the Project Locally (with Docker)
+
+### Steps to Run Locally:
 
 1. Clone the repository and navigate into the project directory:
     ```sh
@@ -73,18 +88,11 @@ You need to install the following tools and configure their dependencies:
     docker-compose up -d
     ```
 
-    This will start both the Spring Boot backend and a MySQL container. The backend will be available on `http://localhost:8080`, and MySQL will be running inside the Docker container.
+    This will set up both the Spring Boot backend and a MySQL container locally. The backend will be available at `http://localhost:8080`, and the MySQL instance will run inside a Docker container.
 
-3. Build the project:
+3. Build the project using Maven:
     ```sh
     mvn package
-    ```
-
-    Should display output similar to:
-    ```sh
-    [INFO] --- jar:3.3.0:jar (default-jar) @ AplicacionesDistriuidas ---
-    [INFO] Building jar: C:\Users\alexa\OneDrive\Escritorio\Aplicaciones_Distribuidas\target\Patrones-0.0.1-SNAPSHOT.jar
-    [INFO] BUILD SUCCESS
     ```
 
 4. Run the application:
@@ -92,86 +100,86 @@ You need to install the following tools and configure their dependencies:
     java -jar target/Patrones-0.0.1-SNAPSHOT.jar
     ```
 
-4. Verify that the application is running by visiting:
+5. Access the application:
     ```sh
     http://localhost:8080
     ```
 
-### Running in AWS
+---
 
-![Funcionamiento AWS](https://github.com/alexandrac1420/Patrones_Arquitecturales/blob/master/Pictures/aws.gif)
+## Running the Project on AWS
 
+In this setup, two **EC2 instances** were used: one for running **MySQL** and another for running the **Spring Boot backend**.
 
-#### 1. Install MySQL in an EC2 Instance
+### 1. **Setting Up MySQL on EC2**
 
-Follow these steps to install MySQL on one EC2 instance:
+1. **Create an EC2 instance** on AWS for the MySQL database, using Amazon Linux 2 as the operating system.
 
-1. **Connect to your EC2 instance** (using SSH):
+2. **Connect to the EC2 instance**:
     ```sh
-    ssh -i your-key.pem ec2-user@<ec2-mysql-instance-public-ip>
+    ssh -i your-key.pem ec2-user@<mysql-ec2-instance-ip>
     ```
 
-2. **Install MySQL**:
+3. **Install MySQL**:
     ```sh
     sudo yum update -y
     sudo yum install -y https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm
     sudo yum install -y mysql-community-server
     ```
+    ![install](https://github.com/alexandrac1420/Patrones_Arquitecturales/blob/master/Pictures/install.png)
 
-3. **Start MySQL**:
+4. **Start MySQL** and enable it to run at boot:
     ```sh
     sudo systemctl start mysqld
     sudo systemctl enable mysqld
     ```
 
-4. **Get the MySQL temporary password**:
+5. **Get the MySQL temporary password**:
     ```sh
     sudo grep 'temporary password' /var/log/mysqld.log
     ```
+    ![passwprd](https://github.com/alexandrac1420/Patrones_Arquitecturales/blob/master/Pictures/contrase%C3%B1aTemporal.png)
 
-5. **Secure MySQL Installation**:
+6. **Secure the MySQL installation**:
     ```sh
     sudo mysql_secure_installation
     ```
 
-    Follow the prompts to set a new password, remove anonymous users, disallow remote root login, and remove test databases.
-
-6. **Create a database and user**:
-    ```sh
-    mysql -u root -p
-    ```
-
-    Inside the MySQL prompt:
+7. **Create the MySQL database and user**:
     ```sql
-    CREATE DATABASE property_management;
-    CREATE USER 'myuser'@'%' IDENTIFIED BY 'mypassword';
-    GRANT ALL PRIVILEGES ON property_management.* TO 'myuser'@'%';
+    CREATE DATABASE mydatabase;
+    CREATE USER 'myuser'@'%' IDENTIFIED BY 'myP@ssw0rd123!';
+    GRANT ALL PRIVILEGES ON mydatabase.* TO 'myuser'@'%';
     FLUSH PRIVILEGES;
-    EXIT;
     ```
 
-7. **Allow external connections**:
-    - Edit the MySQL configuration file to allow remote connections:
-      ```sh
-      sudo nano /etc/my.cnf
-      ```
-      Add or modify the following line under `[mysqld]`:
-      ```sh
-      bind-address = 0.0.0.0
-      ```
-
-    - Restart MySQL:
-      ```sh
-      sudo systemctl restart mysqld
-      ```
-
-8. **Open MySQL port (3306)** in the EC2 security group to allow external access.
-
-#### 2. Set Up Spring Boot Backend in Another EC2 Instance
-
-1. **Connect to your EC2 instance** (using SSH):
+8. **Allow external connections** to MySQL by editing the MySQL config file:
     ```sh
-    ssh -i your-key.pem ec2-user@<ec2-spring-boot-instance-public-ip>
+    sudo nano /etc/my.cnf
+    ```
+    Add the following line under `[mysqld]`:
+    ```sh
+    bind-address = 0.0.0.0
+    ```
+    ![cnf](https://github.com/alexandrac1420/Patrones_Arquitecturales/blob/master/Pictures/cnf.png)
+   
+    Then, restart MySQL:
+    ```sh
+    sudo systemctl restart mysqld
+    ```
+9. **Verify MySQL is Running on Port 3306 and Update AWS Security Groups**:
+   After setting the `bind-address`, verify that MySQL is running on port `3306` using:
+   ```sh
+   sudo netstat -tuln | grep 3306
+    ```
+Ensure port `3306` is open in the AWS Security Group by allowing inbound traffic for MySQL. Similarly, allow port `8080` for the Spring Boot backend to enable external access. This ensures the database and backend services are reachable from outside the EC2 instances.
+
+
+### 2. **Setting Up Spring Boot Backend on a Different EC2 Instance**
+
+1. **Create another EC2 instance** for the backend and connect to it via SSH:
+    ```sh
+    ssh -i your-key.pem ec2-user@<backend-ec2-instance-ip>
     ```
 
 2. **Install Java and Maven**:
@@ -180,28 +188,67 @@ Follow these steps to install MySQL on one EC2 instance:
     sudo yum install maven -y
     ```
 
-3. **Copy the JAR file to the EC2 instance** (from your local machine):
+3. **Transfer the JAR file** to the EC2 instance using **SFTP**:
+   
+   First, connect to the EC2 instance using SFTP with your private key:
+   ```sh
+   sftp -i your-key.pem ec2-user@<backend-ec2-instance-ip>
+   ```
+   Once connected, use the `put` command to upload the JAR file to the EC2 instance:
+    
+   ```sh
+   put target/Patrones-0.0.1-SNAPSHOT.jar
+   ```
+   This will upload the JAR file to the EC2 instance. You can confirm the file is in the     instance by listing the directory contents:
     ```sh
-    scp -i your-key.pem target/PropertyManagement-0.0.1-SNAPSHOT.jar ec2-user@<ec2-spring-boot-instance-public-ip>:~
-    ```
+   ls
+   ```
+    After executing `ls`, you should see `Patrones-0.0.1-SNAPSHOT.jar` listed, indicating the file has been successfully transferred.
 
-4. **Run the Spring Boot application**:
+   
+
+5. **Run the Spring Boot application**:
     ```sh
     java -jar PropertyManagement-0.0.1-SNAPSHOT.jar
     ```
 
-#### 3. Update Spring Boot Configuration to Connect to MySQL in AWS
+---
 
-1. Modify `src/main/resources/application.properties` to point to the MySQL instance in AWS:
-    ```properties
-    spring.datasource.url=jdbc:mysql://<mysql-ec2-instance-public-ip>:3306/property_management
-    spring.datasource.username=myuser
-    spring.datasource.password=mypassword
-    ```
+## Additional Changes for AWS Deployment
 
-2. Restart the Spring Boot application to apply the changes.
+During the deployment to **AWS**, some adjustments were required to make the project work properly:
 
-3. **Open port 8080** in the EC2 security group of the Spring Boot instance to allow access to the application.
+#### 1. **Modifications to `application.properties`**:
+
+In the **Spring Boot backend**, the `application.properties` file needed to be updated to connect to the **MySQL EC2 instance** instead of a local database. The following changes were made:
+
+```properties
+spring.datasource.url=jdbc:mysql://<mysql-ec2-instance-ip>:3306/property_management
+spring.datasource.username=myuser
+spring.datasource.password=mypassword
+```
+This configuration allows the Spring Boot application to connect to the remote MySQL database hosted on the other EC2 instance.
+
+### 2. CORS Configuration in `PropertyController`:
+To enable the frontend, hosted on a different origin (such as localhost or AWS EC2), to communicate with the backend, **Cross-Origin Resource Sharing (CORS)** needed to be enabled in the controller:
+
+```java
+@CrossOrigin(origins = "*")
+@RestController
+@RequestMapping("/properties")
+public class PropertyController {
+    // Controller code
+}
+```
+This allows requests from different origins (e.g., the frontend running on a different machine) to access the backend. Without enabling CORS, requests from different origins would be blocked by the browser, resulting in CORS policy errors.
+
+### 3. Modifications to `index.html`:
+The API endpoint in `index.html` also needed to be updated to point to the public IP address of the **EC2 instance** running the backend instead of `localhost`. The updated `apiBaseUrl` in the frontend would look like this:
+
+```javascript
+const apiBaseUrl = 'http://<backend-ec2-instance-ip>:8080/properties';
+```
+This ensures that the frontend communicates with the backend hosted on AWS EC2, rather than a locally hosted backend.
 
     
 ## Architecture
@@ -381,8 +428,44 @@ This report outlines the unit and integration tests conducted for the Property M
    - **Expected Behavior**: The property is deleted from the database.
    - **Verification**: Confirms that the repository’s `delete` method is called and the property is successfully removed from the database.
 
-[!Test report](https://github.com/alexandrac1420/Patrones_Arquitecturales/blob/master/Pictures/test.png)
+![Test report](https://github.com/alexandrac1420/Patrones_Arquitecturales/blob/master/Pictures/test.png)
 
+## Docker Compose Configuration
+
+The `docker-compose.yml` file contains the configuration needed to run both the MySQL database and the Spring Boot backend in Docker containers. Below is an explanation of the key parts of the configuration:
+
+```yaml
+services:
+  mysql:
+    container_name: 'propierties-mysql'
+    image: 'mysql:latest'
+    environment:
+      - 'MYSQL_DATABASE=propierties'
+      - 'MYSQL_PASSWORD=secret'
+      - 'MYSQL_ROOT_PASSWORD=verysecret'
+      - 'MYSQL_USER=myuser'
+    ports:
+      - '3306:3306'
+```
+### Explanation:
+
+#### Services:
+The `services` section defines the containers that will be started by Docker Compose. In this case, it includes the `mysql` container for the MySQL database.
+
+#### mysql:
+- **container_name**: The name given to the MySQL container. In this case, the container is named `propierties-mysql`.
+
+- **image**: Specifies the Docker image to use for the MySQL service. Here, the latest version of the official `mysql` image is used.
+
+- **environment**: Defines environment variables that configure MySQL:
+  - `MYSQL_DATABASE`: The name of the database to be created inside the MySQL container.
+  - `MYSQL_PASSWORD`: The password for the `myuser` account.
+  - `MYSQL_ROOT_PASSWORD`: The root password for the MySQL server.
+  - `MYSQL_USER`: The name of the non-root user who will have access to the database.
+
+- **ports**: Maps port `3306` of the MySQL container to port `3306` of the host machine. This allows the MySQL database to be accessed from outside the container, for example, by the Spring Boot backend or external database clients.
+
+This configuration allows you to run a MySQL database containerized within Docker, along with your Spring Boot backend, using Docker Compose for a simplified local development environment.
 
 ## Built With
 
