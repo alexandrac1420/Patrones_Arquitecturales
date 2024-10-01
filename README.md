@@ -60,7 +60,7 @@ You need to install the following tools and configure their dependencies:
     git version 2.31.1
     ```
 ---
-## How to Use the Property Management System
+### How to Use the Property Management System
 
 The Property Management System allows users to manage real estate properties by providing functionalities such as creating new properties, updating existing properties, deleting properties, and searching for properties by address. Additionally, the system supports pagination for easier navigation through the property listings.
 
@@ -73,9 +73,9 @@ The Property Management System allows users to manage real estate properties by 
 6. **User Feedback**: The system displays success, error, and validation messages to provide feedback during property management operations.
 
 ---
-## Running the Project Locally (with Docker)
+### Running the Project Locally (with Docker)
 
-### Steps to Run Locally:
+#### Steps to Run Locally:
 
 1. Clone the repository and navigate into the project directory:
     ```sh
@@ -107,11 +107,13 @@ The Property Management System allows users to manage real estate properties by 
 
 ---
 
-## Running the Project on AWS
+### Running the Project on AWS
+![Funcionamiento aws](https://github.com/alexandrac1420/Patrones_Arquitecturales/blob/master/Pictures/aws.gif)
 
 In this setup, two **EC2 instances** were used: one for running **MySQL** and another for running the **Spring Boot backend**.
 
-### 1. **Setting Up MySQL on EC2**
+
+#### 1. **Setting Up MySQL on EC2**
 
 1. **Create an EC2 instance** on AWS for the MySQL database, using Amazon Linux 2 as the operating system.
 
