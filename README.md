@@ -226,7 +226,7 @@ During the deployment to **AWS**, some adjustments were required to make the pro
 In the **Spring Boot backend**, the `application.properties` file needed to be updated to connect to the **MySQL EC2 instance** instead of a local database. The following changes were made:
 
 ```properties
-spring.datasource.url=jdbc:mysql://<mysql-ec2-instance-ip>:3306/property_management
+spring.datasource.url=jdbc:mysql://<mysql-ec2-instance-ip>:3306/mydatabase
 spring.datasource.username=myuser
 spring.datasource.password=mypassword
 ```
