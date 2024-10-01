@@ -173,6 +173,7 @@ In this setup, two **EC2 instances** were used: one for running **MySQL** and an
    sudo netstat -tuln | grep 3306
     ```
 Ensure port `3306` is open in the AWS Security Group by allowing inbound traffic for MySQL. Similarly, allow port `8080` for the Spring Boot backend to enable external access. This ensures the database and backend services are reachable from outside the EC2 instances.
+![verify](https://github.com/alexandrac1420/Patrones_Arquitecturales/blob/master/Pictures/Verificar.png)
 
 
 ### 2. **Setting Up Spring Boot Backend on a Different EC2 Instance**
