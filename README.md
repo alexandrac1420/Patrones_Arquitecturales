@@ -2,7 +2,7 @@
 
 This project implements a simple CRUD (Create, Read, Update, Delete) system for managing real estate properties using a Spring Boot backend and a frontend built with HTML, CSS, and JavaScript. It allows users to create, update, delete, and search for properties, with data stored in a MySQL database.
 
-![Funcionamiento localhost](https://github.com/alexandrac1420/Modularizacion_Virtualizacion/blob/master/Pictures/download.gif)
+![Funcionamiento localhost](https://github.com/alexandrac1420/Patrones_Arquitecturales/blob/master/Pictures/localhost.gif)
 
 ## Getting Started
 
@@ -99,7 +99,7 @@ You need to install the following tools and configure their dependencies:
 
 ### Running in AWS
 
-![Funcionamiento AWS](https://github.com/alexandrac1420/Modularizacion_Virtualizacion/blob/master/Pictures/download.gif)
+![Funcionamiento AWS](https://github.com/alexandrac1420/Patrones_Arquitecturales/blob/master/Pictures/aws.gif)
 
 
 #### 1. Install MySQL in an EC2 Instance
@@ -205,7 +205,7 @@ Follow these steps to install MySQL on one EC2 instance:
 
     
 ## Architecture
-
+![Architecture Diagram](https://github.com/alexandrac1420/Patrones_Arquitecturales/blob/master/Pictures/Arquitectura.png)
 ### Overview
 
 The Property Management System is designed to manage properties using a typical client-server architecture. The frontend is a web interface that communicates with the Spring Boot backend via RESTful APIs. The backend interacts with a MySQL database to store property data. The system supports CRUD operations for property management, and it has been deployed on AWS, using separate EC2 instances for the backend and the database.
@@ -245,7 +245,7 @@ The Property Management System is designed to manage properties using a typical 
 
 ## Class Diagram
 
-![Class Diagram](https://your-class-diagram-link.com)
+![Class Diagram](https://github.com/alexandrac1420/Patrones_Arquitecturales/blob/master/Pictures/DiagramaClases.png)
 
 ### Overview
 
@@ -381,6 +381,7 @@ This report outlines the unit and integration tests conducted for the Property M
    - **Expected Behavior**: The property is deleted from the database.
    - **Verification**: Confirms that the repository’s `delete` method is called and the property is successfully removed from the database.
 
+[!Test report](https://github.com/alexandrac1420/Patrones_Arquitecturales/blob/master/Pictures/test.png)
 
 
 ## Built With
